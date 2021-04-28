@@ -3,3 +3,4 @@ oracle_loadtest.egg-info/
 dist/
 __pycache__/
 .git
+.idea

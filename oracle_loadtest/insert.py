@@ -68,7 +68,7 @@ class OracleLoadTest:
 def main(query, number_records):
     id_min = 1000
     id_max = 10000
-    olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe')
+    olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe', 1521)
 
     if query == "insert":
         namelist = olt.generate_namelist(number_records)
