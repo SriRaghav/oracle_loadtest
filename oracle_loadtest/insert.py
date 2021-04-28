@@ -28,7 +28,8 @@ class OracleLoadTest:
     @staticmethod
     def generate_idlist(number_records, limit_min, limit_max):
 
-        id_list = [], i = 0
+        id_list = []
+        i = 0
 
         while i < number_records:
 
