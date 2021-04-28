@@ -35,7 +35,7 @@ class OracleLoadTest:
 
             rand_num = random.randint(limit_min, limit_max)
             if rand_num not in id_list:
-                id_list.add(rand_num)
+                id_list.append(rand_num)
                 i += 1
 
         return id_list
