@@ -51,7 +51,7 @@ class OracleLoadTest:
 
             connection_obj.commit()
 
-            print("Table - %s and number of records affected - %s " + (table_name, str(cursor_obj.rowcount)))
+            print("Table - %s and number of records affected - %s " % (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
