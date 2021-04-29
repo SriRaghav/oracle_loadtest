@@ -51,7 +51,7 @@ class OracleLoadTest:
 
             connection_obj.commit()
 
-            print("Table - %s and number of records affected - %s " % (table_name, str(cursor_obj.rowcount)))
+            print("Table - %s & number of records inserted - %s " % (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
@@ -81,10 +81,9 @@ def main(query, tables, number_records):
 
         if "Orders" in table_list:
             olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
-        elif "Customers" in table_list:
+
+        if "Customers" in table_list:
             olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
-        else:
-            print("Do you want to recheck table names ?")
 
 
 if __name__ == "__main__":
