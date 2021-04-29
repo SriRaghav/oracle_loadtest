@@ -78,7 +78,7 @@ def main(query, number_records):
         id_list = olt.generate_idlist(number_records, id_min, id_max)
         records = [(id, name) for name, id in zip(namelist, id_list)]
         print(records)
-        olt.insert("Customer", records)
+        olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
 
 
 if __name__ == "__main__":
