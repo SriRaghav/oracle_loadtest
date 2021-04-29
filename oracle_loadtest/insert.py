@@ -63,9 +63,9 @@ class OracleLoadTest:
                 connection_obj.close()
 
 
-def main(query, number_records):
-
+def main(query, tables, number_records):
     olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe', 1521)
+    table_list = tables.split(",")
 
     if query == "insert":
 
@@ -79,12 +79,17 @@ def main(query, number_records):
         value_list = olt.generate_numlist(number_records, 40000, 100000)
         order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
 
-        olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
-        olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
+        if "Orders" in table_list:
+            olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
+        elif "Customers" in table_list:
+            olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
+        else:
+            print("Do you want to recheck table names ?")
+
 
 if __name__ == "__main__":
 
-    if len(sys.argv) == 3:
-        main(sys.argv[1], int(sys.argv[2]))
+    if len(sys.argv) == 4:
+        main(sys.argv[1], sys.argv[2], int(sys.argv[3]))
     else:
         print("Wrong number of inputs, exiting now!")
