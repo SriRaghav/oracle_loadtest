@@ -81,9 +81,11 @@ def main(query, tables, number_records):
 
         if "Orders" in table_list:
             olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
+            print("Sample Records: " + order_records[:2])
 
         if "Customers" in table_list:
             olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
+            print("Sample Records: " + records[:2])
 
 
 if __name__ == "__main__":
