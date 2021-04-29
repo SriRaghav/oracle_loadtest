@@ -54,7 +54,7 @@ class OracleLoadTest:
             # commit that insert the provided data
             connection_obj.commit()
 
-            print("Number of rows inserted: " + cursor_obj.rowscount)
+            print("Number of rows inserted: " + cursor_obj.rowcount)
 
         except cx_Oracle.DatabaseError as e:
             print("There is a problem with Oracle", e)
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         main(sys.argv[1], int(sys.argv[2]))
     else:
-        print("Exiting now!")
+        print("Wrong number of inputs, exiting now!")
