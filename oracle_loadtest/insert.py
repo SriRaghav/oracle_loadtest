@@ -79,16 +79,15 @@ def main(query, tables, number_records):
         value_list = olt.generate_numlist(number_records, 40000, 100000)
         order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
 
-        if "Orders" in table_list:
-            olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
-            print("Sample Records below:")
-            print(order_records[:2])
-
         if "Customers" in table_list:
             olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
-            print("Sample Records below:")
+            print("Sample Records below:(CUSTOMER_ID, CUSTOMER_NAME)")
             print(records[:2])
 
+        if "Orders" in table_list:
+            olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
+            print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
+            print(order_records[:2])
 
 if __name__ == "__main__":
 
