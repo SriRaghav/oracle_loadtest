@@ -47,20 +47,15 @@ class OracleLoadTest:
 
             cursor_obj = connection_obj.cursor()
             query_builder = "insert into " + table_name + " (" + col_names + ") values (:1, :2)"
-            print(query_builder)
             cursor_obj.executemany(query_builder, values)
-            #cursor_obj.execute("insert into customers values(60)")
 
-            # commit that insert the provided data
             connection_obj.commit()
 
-            print("Number of rows inserted: " + cursor_obj.rowcount)
+            print("Table - %s and number of records affected - %s " + (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
-            print("There is a problem with Oracle", e)
+            print("Oracle DB Error!", e)
 
-            # by writing finally if any error occurs
-            # then also we can close the all database operation
         finally:
             if cursor_obj:
                 cursor_obj.close()
@@ -77,7 +72,6 @@ def main(query, number_records):
         namelist = olt.generate_namelist(number_records)
         id_list = olt.generate_idlist(number_records, id_min, id_max)
         records = [(id, name) for name, id in zip(namelist, id_list)]
-        print(records)
         olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
 
 
