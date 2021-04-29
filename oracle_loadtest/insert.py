@@ -40,19 +40,21 @@ class OracleLoadTest:
 
         return id_list
 
-    def insert(self, table_name, values):
+    def insert(self, table_name, col_names, values):
 
         try:
-            connection_object = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
+            connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
 
-            # Now execute the sqlquery
-            cursor = connection_object.cursor()
-            cursor.execute("insert into customers values(60)")
+            cursor_obj = connection_obj.cursor()
+            query_builder = "insert into " + table_name + " (" + col_names + ") values (:1, :2)"
+            print(query_builder)
+            cursor_obj.executemany(query_builder, values)
+            #cursor_obj.execute("insert into customers values(60)")
 
             # commit that insert the provided data
-            connection_object.commit()
+            connection_obj.commit()
 
-            print("value inserted successful")
+            print("Number of rows inserted: " + cursor_obj.rowscount)
 
         except cx_Oracle.DatabaseError as e:
             print("There is a problem with Oracle", e)
@@ -60,10 +62,10 @@ class OracleLoadTest:
             # by writing finally if any error occurs
             # then also we can close the all database operation
         finally:
-            if cursor:
-                cursor.close()
-            if connection_object:
-                connection_object.close()
+            if cursor_obj:
+                cursor_obj.close()
+            if connection_obj:
+                connection_obj.close()
 
 
 def main(query, number_records):
@@ -74,8 +76,9 @@ def main(query, number_records):
     if query == "insert":
         namelist = olt.generate_namelist(number_records)
         id_list = olt.generate_idlist(number_records, id_min, id_max)
-        records = [(name, id) for name, id in zip(namelist, id_list)]
+        records = [(id, name) for name, id in zip(namelist, id_list)]
         print(records)
+        olt.insert("Customer", records)
 
 
 if __name__ == "__main__":
