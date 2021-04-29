@@ -20,7 +20,7 @@ class OracleLoadTest:
         name_list = []
 
         gender = ["male", "female"]
-        for i in range(1, number_records):
+        for i in range(0, number_records):
             name_list.append(names.get_full_name(gender=random.choice(gender)))
 
         return name_list
@@ -31,7 +31,7 @@ class OracleLoadTest:
         id_list = []
         i = 0
 
-        while i < number_records:
+        while i <= number_records:
 
             rand_num = random.randint(limit_min, limit_max)
             if rand_num not in id_list:
