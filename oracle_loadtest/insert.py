@@ -26,7 +26,7 @@ class OracleLoadTest:
         return name_list
 
     @staticmethod
-    def generate_idlist(number_records, limit_min, limit_max):
+    def generate_numlist(number_records, limit_min, limit_max):
 
         id_list = []
         i = 0
@@ -64,16 +64,23 @@ class OracleLoadTest:
 
 
 def main(query, number_records):
-    id_min = 1000
-    id_max = 10000
+
     olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe', 1521)
 
     if query == "insert":
-        namelist = olt.generate_namelist(number_records)
-        id_list = olt.generate_idlist(number_records, id_min, id_max)
-        records = [(id, name) for name, id in zip(namelist, id_list)]
-        olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
 
+        namelist = olt.generate_namelist(number_records)
+        id_list = olt.generate_numlist(number_records, 2, 20000)
+        records = [(id, name) for name, id in zip(namelist, id_list)]
+
+        sample_id_list = random.sample(id_list, round(len(id_list) * 0.4))
+
+        id_list_from_sample = random.choices(sample_id_list, k=number_records)
+        value_list = olt.generate_numlist(number_records, 40000, 100000)
+        order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
+
+        olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
+        olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
 
 if __name__ == "__main__":
 
