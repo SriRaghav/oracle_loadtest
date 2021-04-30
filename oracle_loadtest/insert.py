@@ -88,6 +88,8 @@ class OracleLoadTest:
                     print(query_builder)
                     cursor_obj.executemany(query_builder, values)
 
+                    connection_obj.commit()
+
                     print("\nTable - %s & # UPDATED records - %s " % (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
