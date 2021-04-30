@@ -49,7 +49,7 @@ class OracleLoadTest:
 
             connection_obj.commit()
 
-            print("\nTable - %s & number of records inserted - %s " % (table_name, str(cursor_obj.rowcount)))
+            print("\nTable - %s & # INSERTED records - %s  " % (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
@@ -70,9 +70,25 @@ class OracleLoadTest:
                     query_builder = "select " + column + " from " + table_name
                     cursor_obj.execute(query_builder)
 
-                    return cursor_obj.fetchall()
+                    return [record[0] for record in cursor_obj.fetchall()]
 
-            print("\nTable - %s & number of records fetched - %s " % (table_name, str(cursor_obj.rowcount)))
+            print("\nTable - %s & # FETCHED records - %s " % (table_name, str(cursor_obj.rowcount)))
+
+        except cx_Oracle.DatabaseError as e:
+            print("Oracle DB Error!", e)
+
+    def update(self, table_name, column, values):
+
+        try:
+            with cx_Oracle.connect(self.user,
+                                   self.password,
+                                   self.hostname + '/' + self.service_id) as connection_obj:
+                with connection_obj.cursor() as cursor_obj:
+                    query_builder = "update " + table_name + " set " + column + "= :1 where " + column + "=:2"
+                    print(query_builder)
+                    cursor_obj.executemany(query_builder, values)
+
+                    print("\nTable - %s & # UPDATED records - %s " % (table_name, str(cursor_obj.rowcount)))
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
@@ -108,7 +124,15 @@ def main(query, tables, number_records):
     if query == "update":
 
         records = olt.select(tables, "CUSTOMER_ID")
-        print (records)
+
+        if len(records) >= number_records:
+            old_vaules = random.sample(records, number_records)
+            new_values = olt.generate_numlist(number_records, 10, 100000)
+            update_values = [(old, new) for old, new in zip(old_vaules, new_values)]
+            olt.update(tables, "CUSTOMER_ID", update_values)
+
+
+
 
 
 
