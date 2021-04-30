@@ -4,8 +4,6 @@ import random
 import sys
 
 
-#  con = cx_Oracle.connect('striim', 'oracle', 'localhost/xe')
-
 class OracleLoadTest:
 
     def __init__(self, user, password, hostname, service_id, port_number):
@@ -62,6 +60,23 @@ class OracleLoadTest:
             if connection_obj:
                 connection_obj.close()
 
+    def select(self, table_name, column):
+
+        try:
+            with cx_Oracle.connect(self.user,
+                                   self.password,
+                                   self.hostname + '/' + self.service_id) as connection_obj:
+                with connection_obj.cursor() as cursor_obj:
+                    query_builder = "select " + column + " from " + table_name
+                    cursor_obj.execute(query_builder)
+
+                    return cursor_obj.fetchall()
+
+            print("\nTable - %s & number of records fetched - %s " % (table_name, str(cursor_obj.rowcount)))
+
+        except cx_Oracle.DatabaseError as e:
+            print("Oracle DB Error!", e)
+
 
 def main(query, tables, number_records):
     olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe', 1521)
@@ -88,6 +103,14 @@ def main(query, tables, number_records):
             olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
             print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
             print(order_records[:2])
+
+
+    if query == "update":
+
+        records = olt.select(tables, "CUSTOMER_ID")
+        print (records)
+
+
 
 if __name__ == "__main__":
 
