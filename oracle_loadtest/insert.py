@@ -120,6 +120,7 @@ def main(query, tables, number_records):
 
     if query == "insert":
 
+
         namelist = olt.generate_namelist(number_records)
         id_list = olt.generate_numlist(number_records, 2, 20000)
         records = [(id, name) for name, id in zip(namelist, id_list)]
@@ -129,6 +130,8 @@ def main(query, tables, number_records):
         id_list_from_sample = random.choices(sample_id_list, k=number_records)
         value_list = olt.generate_numlist(number_records, 40000, 100000)
         order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
+
+        customer_table_name, order_table_name = None, None
 
         if "Customers" in table_list:
             customer_table_name = "Customers"
