@@ -103,7 +103,6 @@ class OracleLoadTest:
                                    self.hostname + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "delete from " + table_name + " where " + column + "=:1"
-                    print(query_builder)
                     cursor_obj.executemany(query_builder, values)
 
                     connection_obj.commit()
@@ -112,6 +111,12 @@ class OracleLoadTest:
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
+
+        finally:
+            if cursor_obj:
+                cursor_obj.close()
+            if connection_obj:
+                connection_obj.close()
 
 
 def main(query, tables, number_records):
