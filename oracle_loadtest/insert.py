@@ -157,10 +157,10 @@ def main(query, tables, number_records):
         records = olt.select(tables, "CUSTOMER_ID")
 
         if len(records) >= number_records:
-            print(records)
             old_vaules = random.sample(records, number_records)
             new_values = olt.generate_numlist(number_records, 10, 100000)
             update_values = [(old, new) for old, new in zip(old_vaules, new_values)]
+            print(update_values)
             olt.update(tables, "CUSTOMER_ID", update_values)
 
     if query == "delete":
