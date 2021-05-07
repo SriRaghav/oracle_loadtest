@@ -95,6 +95,24 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
 
+    def delete(self, table_name, column, values):
+
+        try:
+            with cx_Oracle.connect(self.user,
+                                   self.password,
+                                   self.hostname + '/' + self.service_id) as connection_obj:
+                with connection_obj.cursor() as cursor_obj:
+                    query_builder = "delete from " + table_name + " where " + column + "=:1"
+                    print(query_builder)
+                    cursor_obj.executemany(query_builder, values)
+
+                    connection_obj.commit()
+
+                    print("\nTable - %s & # DELETED records - %s " % (table_name, str(cursor_obj.rowcount)))
+
+        except cx_Oracle.DatabaseError as e:
+            print("Oracle DB Error!", e)
+
 
 def main(query, tables, number_records):
     olt = OracleLoadTest('striim', 'oracle', 'localhost', 'xe', 1521)
@@ -112,16 +130,15 @@ def main(query, tables, number_records):
         value_list = olt.generate_numlist(number_records, 40000, 100000)
         order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
 
-        if "Customers" in table_list:
+        if "Customers" in table_list or "CustomersIL" in table_list:
             olt.insert("Customers", "CUSTOMER_ID, CUSTOMER_NAME", records)
             print("Sample Records below:(CUSTOMER_ID, CUSTOMER_NAME)")
             print(records[:2])
 
-        if "Orders" in table_list:
+        if "Orders" in table_list or "OrdersIL" in table_list:
             olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
             print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
             print(order_records[:2])
-
 
     if query == "update":
 
@@ -133,9 +150,16 @@ def main(query, tables, number_records):
             update_values = [(old, new) for old, new in zip(old_vaules, new_values)]
             olt.update(tables, "CUSTOMER_ID", update_values)
 
+    if query == "delete":
 
+        records = olt.select(tables, "CUSTOMER_ID")
 
-
+        if len(records) >= number_records:
+            old_vaules = random.sample(records, number_records)
+            update_values = [ (old) for old in old_vaules]
+            olt.update(tables, "CUSTOMER_ID", update_values)
+        else:
+            print("Error: # Records in the table is " + str(len(records)))
 
 
 if __name__ == "__main__":
