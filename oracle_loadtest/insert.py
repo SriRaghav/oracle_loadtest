@@ -120,7 +120,6 @@ def main(query, tables, number_records):
 
     if query == "insert":
 
-
         namelist = olt.generate_namelist(number_records)
         id_list = olt.generate_numlist(number_records, 2, 20000)
         records = [(id, name) for name, id in zip(namelist, id_list)]
@@ -169,7 +168,7 @@ def main(query, tables, number_records):
 
         if len(records) >= number_records:
             old_vaules = random.sample(records, number_records)
-            update_values = [ (old) for old in old_vaules]
+            update_values = [(old,) for old in old_vaules]
             print(update_values)
             olt.delete(tables, "CUSTOMER_ID", update_values)
         else:
