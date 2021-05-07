@@ -113,9 +113,9 @@ class OracleLoadTest:
             print("Oracle DB Error!", e)
 
         finally:
-            if cursor_obj:
+            if cursor_obj is not None:
                 cursor_obj.close()
-            if connection_obj:
+            if connection_obj is not None:
                 connection_obj.close()
 
 
