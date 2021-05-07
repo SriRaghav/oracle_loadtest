@@ -149,7 +149,7 @@ def main(query, tables, number_records):
             order_table_name = "OrdersIL"
 
         if order_table_name is not None:
-            olt.insert("Orders", "CUSTOMER_ID, ORDER_VALUE", order_records)
+            olt.insert(order_table_name, "CUSTOMER_ID, ORDER_VALUE", order_records)
             print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
             print(order_records[:2])
 
