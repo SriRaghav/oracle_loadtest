@@ -112,11 +112,6 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
 
-        finally:
-            if cursor_obj is not None:
-                cursor_obj.close()
-            if connection_obj is not None:
-                connection_obj.close()
 
 
 def main(query, tables, number_records):
