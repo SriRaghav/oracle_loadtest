@@ -170,7 +170,7 @@ def main(query, tables, number_records):
         if len(records) >= number_records:
             old_vaules = random.sample(records, number_records)
             update_values = [ (old) for old in old_vaules]
-            olt.update(tables, "CUSTOMER_ID", update_values)
+            olt.delete(tables, "CUSTOMER_ID", update_values)
         else:
             print("Error: # Records in the table is " + str(len(records)))
 
