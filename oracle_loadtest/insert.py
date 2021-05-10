@@ -66,7 +66,7 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
 
-    def update(self, table_name, column, values, update_many=False):
+    def update(self, table_name, column, values, update_many=True):
 
         try:
             with cx_Oracle.connect(self.user,

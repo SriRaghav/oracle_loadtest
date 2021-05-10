@@ -15,9 +15,9 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
         olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
 
         for i in range(num_update):
-            records_update = [(records[0][0], i)]
+            records_update = (records[0][0], i)
             print(records_update)
-            x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update))
+            x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update, False))
             x.start()
 
 
