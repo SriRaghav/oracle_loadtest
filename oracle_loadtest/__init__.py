@@ -1,1 +1,1 @@
-from .insert import OracleLoadTest
+from oracle_loadtest import insert
