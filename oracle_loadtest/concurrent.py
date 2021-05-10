@@ -24,7 +24,7 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) == 4:
+    if len(sys.argv) == 6:
         main(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5] )
     else:
         print("Wrong number of inputs, exiting now!")
