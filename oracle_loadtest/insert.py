@@ -74,11 +74,11 @@ class OracleLoadTest:
                                    self.hostname + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "update " + str(table_name) + " set " + column + " = :1 where " + column + " = :2"
-                    print(query_builder)
                     if update_many:
+                        print(query_builder)
                         cursor_obj.executemany(query_builder, values)
                     else:
-                        cursor_obj.execute("update Customers set CUSTOMER_ID=:1 where CUSTOMER_ID=:2", values)
+                        cursor_obj.execute("update Customers set CUSTOMER_ID = :1 where CUSTOMER_ID = :2", values)
 
                     connection_obj.commit()
 
