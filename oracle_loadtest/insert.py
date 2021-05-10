@@ -74,7 +74,7 @@ class OracleLoadTest:
                                    self.password,
                                    self.hostname + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
-                    query_builder = "update " + table_name + " set " + column + "=:1 where " + column + "=:2"
+                    query_builder = "update " + table_name + " set " + column + " = :1 where " + column + " = :2"
                     print(query_builder)
                     cursor_obj.executemany(query_builder, values)
 
