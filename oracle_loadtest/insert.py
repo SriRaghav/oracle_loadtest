@@ -78,7 +78,7 @@ class OracleLoadTest:
                         print(query_builder)
                         cursor_obj.executemany(query_builder, values)
                     else:
-                        cursor_obj.execute("update Customers set CUSTOMER_ID = :1 where CUSTOMER_ID = :2", values)
+                        cursor_obj.execute("update striim.Customers set CUSTOMER_ID = :1 where CUSTOMER_ID = :2", values)
 
                     connection_obj.commit()
 
