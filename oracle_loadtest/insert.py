@@ -25,18 +25,8 @@ class OracleLoadTest:
 
     @staticmethod
     def generate_numlist(number_records, limit_min, limit_max):
+        return random.sample(range(limit_min, limit_max), number_records)
 
-        id_list = []
-        i = 0
-
-        while i <= number_records:
-
-            rand_num = random.randint(limit_min, limit_max)
-            if rand_num not in id_list:
-                id_list.append(rand_num)
-                i += 1
-
-        return id_list
 
     def insert(self, table_name, col_names, values):
 
