@@ -12,12 +12,12 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
     id_list_to_update = olt.generate_numlist(num_insert, 100, 110)
 
     records = [(id, name) for name, id in zip(namelist, id_list)]
-    records_update = [(old, new) for old, new in zip(id_list, id_list_to_update)]
 
     if test_type == "sequential":
         olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
 
         for i in range(num_update):
+            records_update = [(records[0][0], i)]
             x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update))
             x.start()
 
