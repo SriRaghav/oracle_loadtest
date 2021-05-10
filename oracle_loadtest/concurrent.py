@@ -1,6 +1,6 @@
 import sys
 import threading
-from .insert import OracleLoadTest
+from OracleLoadTest
 
 
 def main(num_insert, num_update, num_delete, test_type, table_name):
