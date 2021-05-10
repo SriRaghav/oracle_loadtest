@@ -9,8 +9,6 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
     namelist = olt.generate_namelist(num_insert)
 
     id_list = olt.generate_numlist(num_insert, 1, 100)
-    id_list_to_update = olt.generate_numlist(num_insert, 100, 110)
-
     records = [(id, name) for name, id in zip(namelist, id_list)]
 
     if test_type == "sequential":

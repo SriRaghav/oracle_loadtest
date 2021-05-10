@@ -27,7 +27,6 @@ class OracleLoadTest:
     def generate_numlist(number_records, limit_min, limit_max):
         return random.sample(range(limit_min, limit_max), number_records)
 
-
     def insert(self, table_name, col_names, values):
 
         try:
@@ -67,7 +66,7 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
 
-    def update(self, table_name, column, values):
+    def update(self, table_name, column, values, update_many=False):
 
         try:
             with cx_Oracle.connect(self.user,
@@ -76,7 +75,10 @@ class OracleLoadTest:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "update " + table_name + " set " + column + " = :1 where " + column + " = :2"
                     print(query_builder)
-                    cursor_obj.executemany(query_builder, values)
+                    if update_many:
+                        cursor_obj.executemany(query_builder, values)
+                    else:
+                        cursor_obj.execute(query_builder, values)
 
                     connection_obj.commit()
 
@@ -101,7 +103,6 @@ class OracleLoadTest:
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
-
 
 
 def main(query, tables, number_records):
