@@ -15,7 +15,7 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
     records_update = [(old, new) for old, new in zip(id_list, id_list_to_update)]
 
     if test_type == "sequential":
-        olt.insert(table_name, "CUSTOMER_ID, ORDER_VALUE", records)
+        olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
 
         for i in range(num_update):
             x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update))
