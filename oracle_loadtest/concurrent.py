@@ -12,13 +12,24 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
 
     if test_type == "concurrent":
 
+        updated_records = list()
         olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
 
         for i in range(num_update):
-            records_update = ((records[i][0] * 100), records[i][0])
-            print(records_update)
-            x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update, False))
+            record_update = ((records[i][0] * 100), records[i][0])
+            updated_records.append(record_update)
+
+            print(record_update)
+            x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", record_update, False))
             x.start()
+
+        if num_update >= num_delete:
+            for i in range(num_delete):
+                record_delete = (updated_records[i][0],)
+
+                print(record_update)
+                x = threading.Thread(target=olt.delete, args=(table_name, "CUSTOMER_ID", record_delete, False))
+                x.start()
 
     elif test_type == "sequential":
         olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
