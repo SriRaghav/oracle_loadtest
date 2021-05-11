@@ -2,6 +2,7 @@ import cx_Oracle
 import names
 import random
 import sys
+from queue import Queue
 
 
 class OracleLoadTest:

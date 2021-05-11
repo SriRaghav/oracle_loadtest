@@ -11,7 +11,7 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
     id_list = olt.generate_numlist(num_insert, 1, 100)
     records = [(id, name) for name, id in zip(namelist, id_list)]
 
-    if test_type == "sequential":
+    if test_type == "concurrent":
         olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
 
         for i in range(num_update):
@@ -20,6 +20,14 @@ def main(num_insert, num_update, num_delete, test_type, table_name):
             x = threading.Thread(target=olt.update, args=(table_name, "CUSTOMER_ID", records_update, False))
             x.start()
 
+    elif test_type == "sequential":
+        olt.insert(table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
+        temp = records[0][0]
+
+        for i in range(num_update):
+            records_update = (i+1, temp)
+            olt.update(table_name, "CUSTOMER_ID", records_update, False)
+            temp = i+1
 
 if __name__ == "__main__":
 
