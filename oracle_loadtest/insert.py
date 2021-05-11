@@ -88,7 +88,7 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error!", e)
 
-    def delete(self, table_name, column, values):
+    def delete(self, table_name, column, values, delete_many=True):
 
         try:
             with cx_Oracle.connect(self.user,
@@ -96,7 +96,10 @@ class OracleLoadTest:
                                    self.hostname + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "delete from " + table_name + " where " + column + "=:1"
-                    cursor_obj.executemany(query_builder, values)
+                    if delete_many:
+                        cursor_obj.executemany(query_builder, values)
+                    else:
+                        cursor_obj.execute(query_builder, values)
 
                     connection_obj.commit()
 
