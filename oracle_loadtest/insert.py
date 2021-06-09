@@ -98,7 +98,7 @@ class OracleLoadTest:
                                    self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
-                    query_builder = "select column_name from dba_tab_columns where table_name= " + olt.table_name + " and owner=" + olt.schema
+                    query_builder = "select column_name from dba_tab_columns where table_name= " + olt.table_name + " and owner=" + olt.schema_name
 
                     cursor_obj.execute(query_builder)
 
