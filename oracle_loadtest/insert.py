@@ -155,7 +155,8 @@ def main(olt):
         print(records[1:7])
 
     if olt.operation == "describe":
-        print("In Describe")
+        records = olt.describe(olt.table_name)
+        print(records)
 
     '''if olt.opertion == "insert":
 
