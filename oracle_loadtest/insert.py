@@ -74,7 +74,7 @@ class OracleLoadTest:
         try:
             with cx_Oracle.connect(self.user,
                                    self.password,
-                                   self.hostname + '/' + self.service_id) as connection_obj:
+                                   self.hostname + ":"+ self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
                     if column == "ALL":
