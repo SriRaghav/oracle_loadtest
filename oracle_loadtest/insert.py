@@ -74,7 +74,7 @@ class OracleLoadTest:
         try:
             with cx_Oracle.connect(self.user,
                                    self.password,
-                                   self.hostname + ":"+ self.port_number + '/' + self.service_id) as connection_obj:
+                                   self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
                     if column == "ALL":
@@ -154,9 +154,9 @@ class OracleLoadTest:
 def main(olt):
 
     if olt.operation == "insert":
-        print(olt.user + ":" + olt.password + ":" + olt.hostname + ":" + olt.port_number)
         records = olt.select(olt.table_name, "SPEC_ID")
-        print(records[1:2])
+        print(len(records))
+        print(records[1:7])
 
     if olt.operation == "describe":
         print("In Describe")
