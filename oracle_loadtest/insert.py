@@ -72,8 +72,7 @@ class OracleLoadTest:
     def select(self, table_name, column):
 
         try:
-            with cx_Oracle.connect(self.user,
-                                   self.password,
+            with cx_Oracle.connect(self.user, self.password,
                                    self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
@@ -94,9 +93,8 @@ class OracleLoadTest:
     def describe(self, table_name):
 
         try:
-            with cx_Oracle.connect(self.user,
-                                   self.password,
-                                   self.hostname + '/' + self.service_id) as connection_obj:
+            with cx_Oracle.connect(self.user, self.password,
+                                   self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
                     query_builder = "select * from " + table_name + " ROWNUM 1"
@@ -112,9 +110,8 @@ class OracleLoadTest:
     def update(self, table_name, column, values, update_many=True):
 
         try:
-            with cx_Oracle.connect(self.user,
-                                   self.password,
-                                   self.hostname + '/' + self.service_id) as connection_obj:
+            with cx_Oracle.connect(self.user, self.password,
+                                   self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "update " + str(table_name) + " set " + column + " = :1 where " + column + " = :2"
                     if update_many:
@@ -133,9 +130,8 @@ class OracleLoadTest:
     def delete(self, table_name, column, values, delete_many=True):
 
         try:
-            with cx_Oracle.connect(self.user,
-                                   self.password,
-                                   self.hostname + '/' + self.service_id) as connection_obj:
+            with cx_Oracle.connect(self.user, self.password,
+                                   self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
                     query_builder = "delete from " + table_name + " where " + column + "=:1"
                     if delete_many:
