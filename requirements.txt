@@ -1,2 +1,4 @@
 cx_Oracle==8.1.0
 names==0.3.0
+argparse
+simple_salesforce
