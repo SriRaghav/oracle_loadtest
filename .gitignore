@@ -1,4 +1,5 @@
 ltvenv/
+venv/
 oracle_loadtest.egg-info/
 dist/
 __pycache__/
