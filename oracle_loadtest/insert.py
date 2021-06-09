@@ -29,6 +29,7 @@ class OracleLoadTest:
 
         self.user = oracle_cred_json["user"]
         self.password = oracle_cred_json["password"]
+        self.hostname = oracle_cred_json["hostname"]
         self.service_id = oracle_cred_json["service_id"]
         self.port_number = oracle_cred_json["port_number"]
 
@@ -153,6 +154,7 @@ class OracleLoadTest:
 def main(olt):
 
     if olt.operation == "insert":
+        print(olt.user + ":" + olt.password + ":" + olt.hostname + ":" + olt.port_number)
         records = olt.select(olt.table_name, "SPEC_ID")
         print(records[1:2])
 
