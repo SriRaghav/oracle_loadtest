@@ -17,6 +17,7 @@ class OracleLoadTest:
         self.hostname = None
         self.service_id = None
         self.port_number = None
+        self.schema_name = None
         self.table_name = None
         self.operation = None
         self.num_rows = 0
@@ -97,11 +98,10 @@ class OracleLoadTest:
                                    self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
-                    query_builder = "select * from " + table_name + " ROWNUM 1"
+                    query_builder = "select column_name from dba_tab_columns where table_name= " + olt.table_name + " and owner=" + olt.schema
 
                     cursor_obj.execute(query_builder)
 
-                    print(cursor_obj.description)
                     return [record[0] for record in cursor_obj.description()]
 
         except cx_Oracle.DatabaseError as e:
@@ -227,6 +227,7 @@ if __name__ == "__main__":
     parser.add_argument("--hostname", type=str, dest="hostname")
     parser.add_argument("--service_id", type=str, dest="service_id")
     parser.add_argument("--port_number", type=str, dest="port_number")
+    parser.add_argument("--schema_name", type=str, dest="schema_name")
     parser.add_argument("--table_name", type=str, dest="table_name")
     parser.add_argument("--operation", type=str, choices=["insert", "update", "delete", "describe"], dest="operation",
                         required=True)
