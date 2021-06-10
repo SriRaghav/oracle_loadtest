@@ -211,6 +211,8 @@ def main(olt):
 
     elif olt.operation == "count" or olt.operation == "sample_row" or olt.operation == "list_tables":
         records = olt.table_utility(olt.operation, full_table_name)
+        if olt.operation == "count":
+            print("Table - " + full_table_name + " Record Count - " + str(len(records)))
 
 
     '''if olt.opertion == "insert":
