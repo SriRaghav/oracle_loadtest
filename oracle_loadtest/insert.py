@@ -165,9 +165,8 @@ def main(olt):
 
         mockup_data = []
         if olt.is_mockup:
-            random_record = olt.table_utility("sample_row", full_table_name)
+            random_record = olt.table_utility("sample_row", full_table_name)[0]
             for i in range(olt.num_rows):
-                random_record = []
                 random_spec_id = random.randint(190000000, 200000000)
                 random_record[3] = random_spec_id
                 mockup_data.append(random_record)
