@@ -49,6 +49,36 @@ class OracleLoadTest:
     def generate_numlist(number_records, limit_min, limit_max):
         return random.sample(range(limit_min, limit_max), number_records)
 
+    def incremental_insert(self, table_name, col_names, values):
+
+        value_string = [":"+ str(i) for i in range(col_names)]
+        print(value_string)
+
+        try:
+            connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
+
+            cursor_obj = connection_obj.cursor()
+
+            for i in range(len(col_names)):
+                if (i+3) > len(col_names):
+                    print(",".join(col_names[:(i+3)]))
+                    values[2] = random.randint(200000000, 300000000)
+                    query_builder = "insert into " + table_name + " (" + ",".join(col_names[:(i+3)]) + ") values (" + ",".join(value_string[:(i+3)]) + ")"
+                    cursor_obj.executemany(query_builder, values)
+
+                    connection_obj.commit()
+
+            print("\nTable - %s & # INSERTED records - %s  " % (table_name, str(cursor_obj.rowcount)))
+
+        except cx_Oracle.DatabaseError as e:
+            print("Oracle DB Error!", e)
+
+        finally:
+            if cursor_obj:
+                cursor_obj.close()
+            if connection_obj:
+                connection_obj.close()
+
     def insert(self, table_name, col_names, values):
 
         value_string = [":"+ str(i) for i in range(col_names)]
@@ -174,7 +204,7 @@ def main(olt):
                 random_record[2] = random_spec_id
                 mockup_data.append(tuple(random_record))
 
-            olt.insert(full_table_name, ",".join(olt.columns), mockup_data)
+            olt.incremental_insert(full_table_name, olt.columns, mockup_data)
 
     elif olt.operation == "list_columns":
         print(olt.columns)
