@@ -106,7 +106,7 @@ class OracleLoadTest:
                     elif operation == "list_tables":
                         count = 0
                     elif operation == "sample_row":
-                        query_builder = "select * from (select * from " + table_name + "SAMPLE(1)) fetch first 1 rows " \
+                        query_builder = "select * from (select * from " + table_name + " SAMPLE(1)) fetch first 1 rows " \
                                                                                        "only "
 
                     cursor_obj.execute(query_builder)
@@ -159,7 +159,7 @@ class OracleLoadTest:
 def main(olt):
 
     full_table_name = olt.schema_name + "." + olt.table_name
-    olt.columns = [column for column in olt.table_utility("list_columns", full_table_name)]
+    olt.columns = [column[0] for column in olt.table_utility("list_columns", full_table_name)]
 
     if olt.operation == "insert":
 
