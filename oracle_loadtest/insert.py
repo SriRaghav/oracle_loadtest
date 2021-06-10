@@ -51,7 +51,7 @@ class OracleLoadTest:
 
     def incremental_insert(self, table_name, col_names, values):
 
-        value_string = [":"+ str(i) for i in range(col_names)]
+        value_string = [":"+ str(i) for i in range(len(col_names))]
         print(value_string)
 
         try:
@@ -79,16 +79,15 @@ class OracleLoadTest:
             if connection_obj:
                 connection_obj.close()
 
-    def insert(self, table_name, col_names, values):
+    def insert(self, table_name, col_names, values, index=250):
 
-        value_string = [":"+ str(i) for i in range(col_names)]
-        print(value_string)
+        value_string = [":"+ str(i) for i in range(len(col_names))]
 
         try:
             connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
 
             cursor_obj = connection_obj.cursor()
-            query_builder = "insert into " + table_name + " (" + col_names + ") values (" + ",".join(value_string) + ")"
+            query_builder = "insert into " + table_name + " (" + ",".join(col_names[:index]) + ") values (" + ",".join(value_string[:index]) + ")"
             cursor_obj.executemany(query_builder, values)
 
             connection_obj.commit()
@@ -198,13 +197,14 @@ def main(olt):
 
         mockup_data = []
         if olt.is_mockup:
+            index = 250
             random_record = list(olt.table_utility("sample_row", full_table_name)[0])
             for i in range(olt.num_rows):
                 random_spec_id = random.randint(190000000, 200000000)
                 random_record[2] = random_spec_id
-                mockup_data.append(tuple(random_record))
+                mockup_data.append(tuple(random_record[:250]))
 
-            olt.incremental_insert(full_table_name, olt.columns, mockup_data)
+            olt.insert(full_table_name, olt.columns, mockup_data, index)
 
     elif olt.operation == "list_columns":
         print(olt.columns)
