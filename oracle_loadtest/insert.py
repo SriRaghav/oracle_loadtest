@@ -51,11 +51,14 @@ class OracleLoadTest:
 
     def insert(self, table_name, col_names, values):
 
+        value_string = [":"+ str(i) for i in range(col_names)]
+        print(value_string)
+
         try:
             connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
 
             cursor_obj = connection_obj.cursor()
-            query_builder = "insert into " + table_name + " (" + col_names + ") values (:1, :2)"
+            query_builder = "insert into " + table_name + " (" + col_names + ") values (" + ",".join(value_string) + ")"
             cursor_obj.executemany(query_builder, values)
 
             connection_obj.commit()
