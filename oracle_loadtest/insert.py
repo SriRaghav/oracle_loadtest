@@ -22,6 +22,7 @@ class OracleLoadTest:
         self.operation = None
         self.num_rows = 0
         self.is_mockup = False
+        self.columns = []
 
     def read_creds_from_file(self):
 
@@ -158,15 +159,27 @@ class OracleLoadTest:
 def main(olt):
 
     full_table_name = olt.schema_name + "." + olt.table_name
+    olt.columns = [column for column in olt.table_utility("list_columns", full_table_name)]
 
     if olt.operation == "insert":
-        records = olt.select(full_table_name, "SPEC_ID")
-        print(len(records))
-        print(records[1:7])
 
-    if olt.operation == "list_columns" or olt.operation == "sample_row" or olt.operation == "list_tables":
+        mockup_data = []
+        if olt.is_mockup:
+            random_record = olt.table_utility("sample_row", full_table_name)
+            for i in range(olt.num_rows):
+                random_record = []
+                random_spec_id = random.randint(190000000, 200000000)
+                random_record[3] = random_spec_id
+                mockup_data.append(random_record)
+
+        print(mockup_data)
+
+    elif olt.operation == "list_columns":
+        print(olt.columns)
+
+    elif olt.operation == "count" or olt.operation == "sample_row" or olt.operation == "list_tables":
         records = olt.table_utility(olt.operation, full_table_name)
-        print(records)
+
 
     '''if olt.opertion == "insert":
 
@@ -242,7 +255,7 @@ if __name__ == "__main__":
     parser.add_argument("--operation", type=str, choices=["insert", "update", "delete", "list_columns","list_tables", "count", "sample_row"], dest="operation",
                         required=True)
     parser.add_argument("--is_mockup", action="store_true", dest="is_mockup")
-    parser.add_argument("--num_rows", type=int, dest="num_rows", required=True)
+    parser.add_argument("--num_rows", type=int, dest="num_rows")
 
     args = parser.parse_args(namespace=olt)
 
