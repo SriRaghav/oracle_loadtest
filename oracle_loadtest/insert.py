@@ -105,11 +105,12 @@ class OracleLoadTest:
                     elif operation == "list_tables":
                         count = 0
                     elif operation == "sample_row":
-                        query_builder = "select * from " + table_name + " sample(1)"
+                        query_builder = "select * from (select * from " + table_name + "SAMPLE(1)) fetch first 1 rows " \
+                                                                                       "only "
 
                     cursor_obj.execute(query_builder)
 
-                    return [record[0] for record in cursor_obj.description()]
+                    return cursor_obj.fetchall()
 
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error - Describe function!", e)
@@ -163,7 +164,7 @@ def main(olt):
         print(len(records))
         print(records[1:7])
 
-    if olt.operation == "describe":
+    if olt.operation == "list_columns" or olt.operation == "sample_row" or olt.operation == "list_tables":
         records = olt.table_utility(olt.operation, full_table_name)
         print(records)
 
