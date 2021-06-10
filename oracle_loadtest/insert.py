@@ -91,14 +91,21 @@ class OracleLoadTest:
         except cx_Oracle.DatabaseError as e:
             print("Oracle DB Error! - Select function", e)
 
-    def describe(self, table_name):
+    def table_utility(self, operation, table_name):
 
         try:
             with cx_Oracle.connect(self.user, self.password,
                                    self.hostname + ":" + self.port_number + '/' + self.service_id) as connection_obj:
                 with connection_obj.cursor() as cursor_obj:
 
-                    query_builder = "select column_name from dba_tab_columns where table_name=" + olt.table_name + " and owner=" + olt.schema_name
+                    if operation == "list_columns":
+                        query_builder = "select column_name from dba_tab_columns where table_name='" + olt.table_name + "' and owner='" + olt.schema_name + "'"
+                    elif operation == "count":
+                        query_builder = "select count(*) from " + table_name
+                    elif operation == "list_tables":
+                        count = 0
+                    elif operation == "sample_row":
+                        query_builder = "select * from " + table_name + " sample(1)"
 
                     cursor_obj.execute(query_builder)
 
@@ -149,13 +156,15 @@ class OracleLoadTest:
 
 def main(olt):
 
+    full_table_name = olt.schema_name + "." + olt.table_name
+
     if olt.operation == "insert":
-        records = olt.select(olt.table_name, "SPEC_ID")
+        records = olt.select(full_table_name, "SPEC_ID")
         print(len(records))
         print(records[1:7])
 
     if olt.operation == "describe":
-        records = olt.describe(olt.table_name)
+        records = olt.table_utility(olt.operation, full_table_name)
         print(records)
 
     '''if olt.opertion == "insert":
@@ -194,7 +203,7 @@ def main(olt):
 
     if olt.operation == "update":
 
-        records = olt.select(olt.table_name, "CUSTOMER_ID")
+        records = olt.select(full_table_name, "CUSTOMER_ID")
 
         if len(records) >= olt.num_rows:
             old_values = random.sample(records, olt.num_rows)
@@ -205,7 +214,7 @@ def main(olt):
 
     if olt.operation == "delete":
 
-        records = olt.select(olt.table_name, "CUSTOMER_ID")
+        records = olt.select(full_table_name, "CUSTOMER_ID")
 
         if len(records) >= olt.num_rows:
             old_vaules = random.sample(records, olt.num_rows)
@@ -229,7 +238,7 @@ if __name__ == "__main__":
     parser.add_argument("--port_number", type=str, dest="port_number")
     parser.add_argument("--schema_name", type=str, dest="schema_name")
     parser.add_argument("--table_name", type=str, dest="table_name")
-    parser.add_argument("--operation", type=str, choices=["insert", "update", "delete", "describe"], dest="operation",
+    parser.add_argument("--operation", type=str, choices=["insert", "update", "delete", "list_columns","list_tables", "count", "sample_row"], dest="operation",
                         required=True)
     parser.add_argument("--is_mockup", action="store_true", dest="is_mockup")
     parser.add_argument("--num_rows", type=int, dest="num_rows", required=True)
