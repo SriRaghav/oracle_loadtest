@@ -165,13 +165,13 @@ def main(olt):
 
         mockup_data = []
         if olt.is_mockup:
-            random_record = olt.table_utility("sample_row", full_table_name)[0]
+            random_record = list(olt.table_utility("sample_row", full_table_name)[0])
             for i in range(olt.num_rows):
                 random_spec_id = random.randint(190000000, 200000000)
-                random_record[3] = random_spec_id
-                mockup_data.append(random_record)
+                random_record[2] = random_spec_id
+                mockup_data.append(tuple(random_record))
 
-        print(mockup_data)
+            olt.insert(full_table_name, ",".join(olt.columns), mockup_data)
 
     elif olt.operation == "list_columns":
         print(olt.columns)
