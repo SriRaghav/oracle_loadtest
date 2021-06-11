@@ -212,7 +212,7 @@ def main(olt):
         if len(records) >= olt.num_rows:
             old_values = random.sample(records, olt.num_rows)
             new_values = olt.generate_numlist(olt.num_rows, 300000000, 400000000)
-            update_values = [(old, new) for old, new in zip(old_values, new_values)]
+            update_values = [(new, old) for old, new in zip(old_values, new_values)]
             olt.update(full_table_name, "SPEC_ID", update_values)
 
     elif olt.operation == "delete":
@@ -266,7 +266,7 @@ def main(olt):
         if order_table_name is not None:
             olt.insert(order_table_name, "CUSTOMER_ID, ORDER_VALUE", order_records)
             print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
-            print(order_records[:2])'''
+            print(order_records[:2])
 
     if olt.operation == "update":
 
@@ -289,7 +289,7 @@ def main(olt):
             print(update_values)
             olt.delete(olt.table_name, "CUSTOMER_ID", update_values)
         else:
-            print("Error: # Records in the table is " + str(len(records)))
+            print("Error: # Records in the table is " + str(len(records))) '''
 
 
 if __name__ == "__main__":
