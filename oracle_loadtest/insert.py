@@ -206,6 +206,25 @@ def main(olt):
 
             olt.insert(full_table_name, olt.columns, mockup_data, index)
 
+    elif olt.operation == "update":
+        records = olt.select(full_table_name, "SPEC_ID")
+
+        if len(records) >= olt.num_rows:
+            old_values = random.sample(records, olt.num_rows)
+            new_values = olt.generate_numlist(olt.num_rows, 300000000, 400000000)
+            update_values = [(old, new) for old, new in zip(old_values, new_values)]
+            olt.update(full_table_name, "SPEC_ID", update_values)
+
+    elif olt.operation == "delete":
+        records = olt.select(full_table_name, "SPEC_ID")
+
+        if len(records) >= olt.num_rows:
+            old_values = random.sample(records, olt.num_rows)
+            update_values = [(old,) for old in old_values]
+            olt.delete(olt.table_name, "SPEC_ID", update_values)
+        else:
+            print("Error: # Records in the table is " + str(len(records)))
+
     elif olt.operation == "list_columns":
         print(olt.columns)
 
