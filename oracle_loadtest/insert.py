@@ -195,7 +195,7 @@ def main(olt):
         else:
             print("Error: # Records in the table is " + str(len(records)))
 
-    elif olt.operation == "concurrent":
+    if olt.operation == "concurrent":
 
         updated_records = list()
         for i in range(olt.num_rows):
