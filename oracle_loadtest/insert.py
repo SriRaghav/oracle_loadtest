@@ -130,7 +130,8 @@ class OracleLoadTest:
                         print(query_builder)
                         cursor_obj.executemany(query_builder, values)
                     else:
-                        cursor_obj.execute("update " + str(table_name) + " set " + column + " = :1 where " + column + " = :2", values)
+                        cursor_obj.execute(
+                            "update " + str(table_name) + " set " + column + " = :1 where " + column + " = :2", values)
 
                     connection_obj.commit()
                     print(values)
@@ -209,9 +210,20 @@ def main(olt):
         for i in range(olt.num_rows):
             record_delete = (updated_records[i][0],)
 
-            print(record_update)
+            print(record_delete)
             x = threading.Thread(target=olt.delete, args=(full_table_name, "SPEC_ID", record_delete, False))
             x.start()
+
+    elif olt.operation == "sequential":
+
+        temp = mockup_data[0][2]
+
+        for i in range(100):
+            records_update = (i, temp)
+            olt.update(full_table_name, "SPEC_ID", records_update, False)
+            temp = i
+
+        olt.delete(full_table_name, "SPEC_ID", [(temp,)])
 
     elif olt.operation == "list_columns":
         print(olt.columns)
@@ -220,63 +232,6 @@ def main(olt):
         records = olt.table_utility(olt.operation, full_table_name)
         if olt.operation == "count":
             print("Table - " + full_table_name + " Record Count - " + str(records[0]))
-
-    '''if olt.opertion == "insert":
-
-        namelist = olt.generate_namelist(number_records)
-        id_list = olt.generate_numlist(number_records, 2, 20000)
-        records = [(id, name) for name, id in zip(namelist, id_list)]
-
-        sample_id_list = random.sample(id_list, round(len(id_list) * 0.4))
-
-        id_list_from_sample = random.choices(sample_id_list, k=number_records)
-        value_list = olt.generate_numlist(number_records, 40000, 100000)
-        order_records = [(id, value) for id, value in zip(id_list_from_sample, value_list)]
-
-        customer_table_name, order_table_name = None, None
-
-        if "Customers" in table_list:
-            customer_table_name = "Customers"
-        elif "CustomersIL" in table_list:
-            customer_table_name = "CustomersIL"
-
-        if customer_table_name is not None:
-            olt.insert(customer_table_name, "CUSTOMER_ID, CUSTOMER_NAME", records)
-            print("Sample Records below:(CUSTOMER_ID, CUSTOMER_NAME)")
-            print(records[:2])
-
-        if "Orders" in table_list:
-            order_table_name = "Orders"
-        elif "OrdersIL" in table_list:
-            order_table_name = "OrdersIL"
-
-        if order_table_name is not None:
-            olt.insert(order_table_name, "CUSTOMER_ID, ORDER_VALUE", order_records)
-            print("Sample Records below:(CUSTOMER_ID, ORDER_VALUE)")
-            print(order_records[:2])
-
-    if olt.operation == "update":
-
-        records = olt.select(full_table_name, "CUSTOMER_ID")
-
-        if len(records) >= olt.num_rows:
-            old_values = random.sample(records, olt.num_rows)
-            new_values = olt.generate_numlist(olt.num_rows, 10, 100000)
-            update_values = [(old, new) for old, new in zip(old_values, new_values)]
-            print(update_values)
-            olt.update(olt.table_name, "CUSTOMER_ID", update_values)
-
-    if olt.operation == "delete":
-
-        records = olt.select(full_table_name, "CUSTOMER_ID")
-
-        if len(records) >= olt.num_rows:
-            old_vaules = random.sample(records, olt.num_rows)
-            update_values = [(old,) for old in old_vaules]
-            print(update_values)
-            olt.delete(olt.table_name, "CUSTOMER_ID", update_values)
-        else:
-            print("Error: # Records in the table is " + str(len(records))) '''
 
 
 if __name__ == "__main__":
@@ -293,7 +248,8 @@ if __name__ == "__main__":
     parser.add_argument("--schema_name", type=str, dest="schema_name")
     parser.add_argument("--table_name", type=str, dest="table_name")
     parser.add_argument("--operation", type=str,
-                        choices=["insert", "update", "delete", "list_columns", "list_tables", "count", "sample_row", "concurrent"],
+                        choices=["insert", "update", "delete", "list_columns", "list_tables", "count", "sample_row",
+                                 "concurrent"],
                         dest="operation",
                         required=True)
     parser.add_argument("--is_mockup", action="store_true", dest="is_mockup")
