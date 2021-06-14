@@ -130,7 +130,7 @@ class OracleLoadTest:
                         print(query_builder)
                         cursor_obj.executemany(query_builder, values)
                     else:
-                        cursor_obj.execute("update Customers set " + column + " = :1 where " + column + " = :2", values)
+                        cursor_obj.execute("update " + str(table_name) + " set " + column + " = :1 where " + column + " = :2", values)
 
                     connection_obj.commit()
                     print(values)
@@ -198,7 +198,7 @@ def main(olt):
     elif olt.operation == "concurrent":
 
         updated_records = list()
-        for i in range(10):
+        for i in range(olt.num_rows):
             record_update = ((mockup_data[i][2] * 9), mockup_data[i][2])
             updated_records.append(record_update)
 
@@ -206,8 +206,8 @@ def main(olt):
             x = threading.Thread(target=olt.update, args=(full_table_name, "SPEC_ID", record_update, False))
             x.start()
 
-        for i in range(5):
-            record_delete = (updated_records[i][2],)
+        for i in range(olt.num_rows):
+            record_delete = (updated_records[i][0],)
 
             print(record_update)
             x = threading.Thread(target=olt.delete, args=(full_table_name, "SPEC_ID", record_delete, False))
