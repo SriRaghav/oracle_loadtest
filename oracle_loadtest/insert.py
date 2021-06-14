@@ -4,11 +4,11 @@ import random
 import sys
 import json
 import argparse
+import threading
 from queue import Queue
 
 
 class OracleLoadTest:
-
     file_path = "/home/oracle_loadtest/oracle_cred.txt"
 
     def __init__(self):
@@ -49,45 +49,16 @@ class OracleLoadTest:
     def generate_numlist(number_records, limit_min, limit_max):
         return random.sample(range(limit_min, limit_max), number_records)
 
-    def incremental_insert(self, table_name, col_names, values):
-
-        value_string = [":"+ str(i) for i in range(len(col_names))]
-        print(value_string)
-
-        try:
-            connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
-
-            cursor_obj = connection_obj.cursor()
-
-            for i in range(len(col_names)):
-                if (i+3) > len(col_names):
-                    print(",".join(col_names[:(i+3)]))
-                    values[2] = random.randint(200000000, 300000000)
-                    query_builder = "insert into " + table_name + " (" + ",".join(col_names[:(i+3)]) + ") values (" + ",".join(value_string[:(i+3)]) + ")"
-                    cursor_obj.executemany(query_builder, values)
-
-                    connection_obj.commit()
-
-            print("\nTable - %s & # INSERTED records - %s  " % (table_name, str(cursor_obj.rowcount)))
-
-        except cx_Oracle.DatabaseError as e:
-            print("Oracle DB Error!", e)
-
-        finally:
-            if cursor_obj:
-                cursor_obj.close()
-            if connection_obj:
-                connection_obj.close()
-
     def insert(self, table_name, col_names, values, index=250):
 
-        value_string = [":"+ str(i) for i in range(len(col_names))]
+        value_string = [":" + str(i) for i in range(len(col_names))]
 
         try:
             connection_obj = cx_Oracle.connect(self.user, self.password, self.hostname + '/' + self.service_id)
 
             cursor_obj = connection_obj.cursor()
-            query_builder = "insert into " + table_name + " (" + ",".join(col_names[:index]) + ") values (" + ",".join(value_string[:index]) + ")"
+            query_builder = "insert into " + table_name + " (" + ",".join(col_names[:index]) + ") values (" + ",".join(
+                value_string[:index]) + ")"
             cursor_obj.executemany(query_builder, values)
 
             connection_obj.commit()
@@ -159,7 +130,7 @@ class OracleLoadTest:
                         print(query_builder)
                         cursor_obj.executemany(query_builder, values)
                     else:
-                        cursor_obj.execute("update Customers set CUSTOMER_ID = :1 where CUSTOMER_ID = :2", values)
+                        cursor_obj.execute("update Customers set " + column + " = :1 where " + column + " = :2", values)
 
                     connection_obj.commit()
                     print(values)
@@ -189,13 +160,12 @@ class OracleLoadTest:
 
 
 def main(olt):
-
+    mockup_data = []
     full_table_name = olt.schema_name + "." + olt.table_name
     olt.columns = [column[0] for column in olt.table_utility("list_columns", full_table_name)]
 
-    if olt.operation == "insert":
+    if olt.operation == "insert" or olt.operation == "concurrent":
 
-        mockup_data = []
         if olt.is_mockup:
             index = 250
             random_record = list(olt.table_utility("sample_row", full_table_name)[0])
@@ -221,9 +191,27 @@ def main(olt):
         if len(records) >= olt.num_rows:
             old_values = random.sample(records, olt.num_rows)
             update_values = [(old,) for old in old_values]
-            olt.delete(olt.table_name, "SPEC_ID", update_values)
+            olt.delete(full_table_name, "SPEC_ID", update_values)
         else:
             print("Error: # Records in the table is " + str(len(records)))
+
+    elif olt.operation == "concurrent":
+
+        updated_records = list()
+        for i in range(10):
+            record_update = ((mockup_data[i][2] * 9), mockup_data[i][2])
+            updated_records.append(record_update)
+
+            print(record_update)
+            x = threading.Thread(target=olt.update, args=(full_table_name, "SPEC_ID", record_update, False))
+            x.start()
+
+        for i in range(5):
+            record_delete = (updated_records[i][2],)
+
+            print(record_update)
+            x = threading.Thread(target=olt.delete, args=(full_table_name, "SPEC_ID", record_delete, False))
+            x.start()
 
     elif olt.operation == "list_columns":
         print(olt.columns)
@@ -231,8 +219,7 @@ def main(olt):
     elif olt.operation == "count" or olt.operation == "sample_row" or olt.operation == "list_tables":
         records = olt.table_utility(olt.operation, full_table_name)
         if olt.operation == "count":
-            print("Table - " + full_table_name + " Record Count - " + str(len(records)))
-
+            print("Table - " + full_table_name + " Record Count - " + str(records[0]))
 
     '''if olt.opertion == "insert":
 
@@ -305,7 +292,9 @@ if __name__ == "__main__":
     parser.add_argument("--port_number", type=str, dest="port_number")
     parser.add_argument("--schema_name", type=str, dest="schema_name")
     parser.add_argument("--table_name", type=str, dest="table_name")
-    parser.add_argument("--operation", type=str, choices=["insert", "update", "delete", "list_columns","list_tables", "count", "sample_row"], dest="operation",
+    parser.add_argument("--operation", type=str,
+                        choices=["insert", "update", "delete", "list_columns", "list_tables", "count", "sample_row", "concurrent"],
+                        dest="operation",
                         required=True)
     parser.add_argument("--is_mockup", action="store_true", dest="is_mockup")
     parser.add_argument("--num_rows", type=int, dest="num_rows")
